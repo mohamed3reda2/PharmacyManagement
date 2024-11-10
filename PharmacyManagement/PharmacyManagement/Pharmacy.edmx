@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="PharmacyModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Admin_users">
+          <Key>
+            <PropertyRef Name="Admin_ID" />
+          </Key>
+          <Property Name="Admin_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Admin_name" Type="nvarchar" MaxLength="50" />
+          <Property Name="Admin_pass" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="expenses">
+          <Key>
+            <PropertyRef Name="expenses_id" />
+          </Key>
+          <Property Name="expenses_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Product_id" Type="int" />
+          <Property Name="Qty" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Total_Price" Type="decimal" Precision="21" Scale="4" StoreGeneratedPattern="Computed" />
+          <Property Name="expenses_date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="Product_id" />
+          </Key>
+          <Property Name="Product_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Product_name" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="stock_Number" Type="int" Nullable="false" />
+          <Property Name="price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Product_type" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Expiration_date" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="reports">
+          <Key>
+            <PropertyRef Name="report_id" />
+          </Key>
+          <Property Name="report_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Total_Price_e" Type="decimal" Precision="15" Scale="2" Nullable="false" />
+          <Property Name="Total_Price_s" Type="decimal" Precision="15" Scale="2" Nullable="false" />
+          <Property Name="report_Content" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="report_date" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Pharmacy.dbo.sales' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="sales">
+          <Key>
+            <PropertyRef Name="Qty" />
+            <PropertyRef Name="price" />
+          </Key>
+          <Property Name="Product_id" Type="int" />
+          <Property Name="User_id" Type="int" />
+          <Property Name="Qty" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="price" Type="decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Total_Price" Type="decimal" Precision="21" Scale="4" StoreGeneratedPattern="Computed" />
+          <Property Name="sales_date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="User_id" />
+          </Key>
+          <Property Name="User_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="user_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Pathological_condition" Type="nvarchar" MaxLength="50" />
+          <Property Name="Loyalty_Card" Type="bit" />
+        </EntityType>
+        <Association Name="FK__expenses__Produc__5441852A">
+          <End Role="Product" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="expenses" Type="Self.expenses" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Product_id" />
+            </Principal>
+            <Dependent Role="expenses">
+              <PropertyRef Name="Product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__sales__Product_i__4F7CD00D">
+          <End Role="Product" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="sales" Type="Self.sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Product_id" />
+            </Principal>
+            <Dependent Role="sales">
+              <PropertyRef Name="Product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__sales__User_id__5070F446">
+          <End Role="Users" Type="Self.Users" Multiplicity="0..1" />
+          <End Role="sales" Type="Self.sales" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="User_id" />
+            </Principal>
+            <Dependent Role="sales">
+              <PropertyRef Name="User_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PharmacyModelStoreContainer">
+          <EntitySet Name="Admin_users" EntityType="Self.Admin_users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="expenses" EntityType="Self.expenses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Product" EntityType="Self.Product" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="reports" EntityType="Self.reports" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sales" EntityType="Self.sales" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [sales].[Product_id] AS [Product_id], 
+    [sales].[User_id] AS [User_id], 
+    [sales].[Qty] AS [Qty], 
+    [sales].[price] AS [price], 
+    [sales].[Total_Price] AS [Total_Price], 
+    [sales].[sales_date] AS [sales_date]
+    FROM [dbo].[sales] AS [sales]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK__expenses__Produc__5441852A" Association="Self.FK__expenses__Produc__5441852A">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="expenses" EntitySet="expenses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__sales__Product_i__4F7CD00D" Association="Self.FK__sales__Product_i__4F7CD00D">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="sales" EntitySet="sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK__sales__User_id__5070F446" Association="Self.FK__sales__User_id__5070F446">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="sales" EntitySet="sales" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PharmacyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Admin_users">
+          <Key>
+            <PropertyRef Name="Admin_ID" />
+          </Key>
+          <Property Name="Admin_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Admin_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Admin_pass" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="expens">
+          <Key>
+            <PropertyRef Name="expenses_id" />
+          </Key>
+          <Property Name="expenses_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Product_id" Type="Int32" />
+          <Property Name="Qty" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="price" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Total_Price" Type="Decimal" Precision="21" Scale="4" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="expenses_date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__expenses__Produc__5441852A" FromRole="expenses" ToRole="Product" />
+        </EntityType>
+        <EntityType Name="Product">
+          <Key>
+            <PropertyRef Name="Product_id" />
+          </Key>
+          <Property Name="Product_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Product_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="stock_Number" Type="Int32" Nullable="false" />
+          <Property Name="price" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Product_type" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Expiration_date" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="expenses" Relationship="Self.FK__expenses__Produc__5441852A" FromRole="Product" ToRole="expenses" />
+          <NavigationProperty Name="sales" Relationship="Self.FK__sales__Product_i__4F7CD00D" FromRole="Product" ToRole="sales" />
+        </EntityType>
+        <EntityType Name="report">
+          <Key>
+            <PropertyRef Name="report_id" />
+          </Key>
+          <Property Name="report_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Total_Price_e" Type="Decimal" Precision="15" Scale="2" Nullable="false" />
+          <Property Name="Total_Price_s" Type="Decimal" Precision="15" Scale="2" Nullable="false" />
+          <Property Name="report_Content" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="report_date" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="User_id" />
+          </Key>
+          <Property Name="User_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="user_name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Pathological_condition" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Loyalty_Card" Type="Boolean" />
+          <NavigationProperty Name="sales" Relationship="Self.FK__sales__User_id__5070F446" FromRole="Users" ToRole="sales" />
+        </EntityType>
+        <EntityType Name="sale">
+          <Key>
+            <PropertyRef Name="Qty" />
+            <PropertyRef Name="price" />
+          </Key>
+          <Property Name="Product_id" Type="Int32" />
+          <Property Name="User_id" Type="Int32" />
+          <Property Name="Qty" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="price" Type="Decimal" Precision="10" Scale="2" Nullable="false" />
+          <Property Name="Total_Price" Type="Decimal" Precision="21" Scale="4" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="sales_date" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="Product" Relationship="Self.FK__sales__Product_i__4F7CD00D" FromRole="sales" ToRole="Product" />
+          <NavigationProperty Name="User" Relationship="Self.FK__sales__User_id__5070F446" FromRole="sales" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK__expenses__Produc__5441852A">
+          <End Role="Product" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="expenses" Type="Self.expens" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Product_id" />
+            </Principal>
+            <Dependent Role="expenses">
+              <PropertyRef Name="Product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__sales__Product_i__4F7CD00D">
+          <End Role="Product" Type="Self.Product" Multiplicity="0..1" />
+          <End Role="sales" Type="Self.sale" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Product_id" />
+            </Principal>
+            <Dependent Role="sales">
+              <PropertyRef Name="Product_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__sales__User_id__5070F446">
+          <End Role="Users" Type="Self.User" Multiplicity="0..1" />
+          <End Role="sales" Type="Self.sale" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="User_id" />
+            </Principal>
+            <Dependent Role="sales">
+              <PropertyRef Name="User_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PharmacyEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Admin_users" EntityType="Self.Admin_users" />
+          <EntitySet Name="expenses" EntityType="Self.expens" />
+          <EntitySet Name="Products" EntityType="Self.Product" />
+          <EntitySet Name="reports" EntityType="Self.report" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <EntitySet Name="sales" EntityType="Self.sale" />
+          <AssociationSet Name="FK__expenses__Produc__5441852A" Association="Self.FK__expenses__Produc__5441852A">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="expenses" EntitySet="expenses" />
+          </AssociationSet>
+          <AssociationSet Name="FK__sales__Product_i__4F7CD00D" Association="Self.FK__sales__Product_i__4F7CD00D">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="sales" EntitySet="sales" />
+          </AssociationSet>
+          <AssociationSet Name="FK__sales__User_id__5070F446" Association="Self.FK__sales__User_id__5070F446">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="sales" EntitySet="sales" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PharmacyModelStoreContainer" CdmEntityContainer="PharmacyEntities">
+          <EntitySetMapping Name="Admin_users">
+            <EntityTypeMapping TypeName="PharmacyModel.Admin_users">
+              <MappingFragment StoreEntitySet="Admin_users">
+                <ScalarProperty Name="Admin_ID" ColumnName="Admin_ID" />
+                <ScalarProperty Name="Admin_name" ColumnName="Admin_name" />
+                <ScalarProperty Name="Admin_pass" ColumnName="Admin_pass" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="expenses">
+            <EntityTypeMapping TypeName="PharmacyModel.expens">
+              <MappingFragment StoreEntitySet="expenses">
+                <ScalarProperty Name="expenses_id" ColumnName="expenses_id" />
+                <ScalarProperty Name="Product_id" ColumnName="Product_id" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="Total_Price" ColumnName="Total_Price" />
+                <ScalarProperty Name="expenses_date" ColumnName="expenses_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Products">
+            <EntityTypeMapping TypeName="PharmacyModel.Product">
+              <MappingFragment StoreEntitySet="Product">
+                <ScalarProperty Name="Product_id" ColumnName="Product_id" />
+                <ScalarProperty Name="Product_name" ColumnName="Product_name" />
+                <ScalarProperty Name="stock_Number" ColumnName="stock_Number" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="Product_type" ColumnName="Product_type" />
+                <ScalarProperty Name="Expiration_date" ColumnName="Expiration_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="reports">
+            <EntityTypeMapping TypeName="PharmacyModel.report">
+              <MappingFragment StoreEntitySet="reports">
+                <ScalarProperty Name="report_id" ColumnName="report_id" />
+                <ScalarProperty Name="Total_Price_e" ColumnName="Total_Price_e" />
+                <ScalarProperty Name="Total_Price_s" ColumnName="Total_Price_s" />
+                <ScalarProperty Name="report_Content" ColumnName="report_Content" />
+                <ScalarProperty Name="report_date" ColumnName="report_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="PharmacyModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="user_name" ColumnName="user_name" />
+                <ScalarProperty Name="Pathological_condition" ColumnName="Pathological_condition" />
+                <ScalarProperty Name="Loyalty_Card" ColumnName="Loyalty_Card" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sales">
+            <EntityTypeMapping TypeName="PharmacyModel.sale">
+              <MappingFragment StoreEntitySet="sales">
+                <ScalarProperty Name="Product_id" ColumnName="Product_id" />
+                <ScalarProperty Name="User_id" ColumnName="User_id" />
+                <ScalarProperty Name="Qty" ColumnName="Qty" />
+                <ScalarProperty Name="price" ColumnName="price" />
+                <ScalarProperty Name="Total_Price" ColumnName="Total_Price" />
+                <ScalarProperty Name="sales_date" ColumnName="sales_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
